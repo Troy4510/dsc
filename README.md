@@ -1,2 +1,2 @@
 # dsc
-DeeSeekChat
+DeepSeekChat
