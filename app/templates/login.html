@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+    
+    <form action="" method="post">
+        <p>
+	    <label for="username"> ЛОГИН___</label>
+	    <input type="text" name="username">
+	</p>
+	<p>
+	    <label for="password">ПАРОЛЬ__</label>
+	    <input type="password" name="password">
+	</p>
+	<p>
+	    <input type="submit">
+	</p>
+
+    </form>
+
+	<p>
+    Ваш ip: {{addr}}
+	</p>
+
+	Ваш клиент: {{cli}}
+
+</body>
+</html>
