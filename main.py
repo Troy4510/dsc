@@ -78,22 +78,36 @@ def register_user():
     return render_template('login.html', message = 'LOGIN PAGE')
 
 
-@app.route('/check/')
+@app.route('/user/')
 @login_required
 def check_result():
     #print(dir(current_user))
     #print(db.session.get(Users, 3).id)
     #print(db.session.query(Users).filter_by(id = current_user))
     msg = f'USERNAME: {current_user.name}, STATUS: {current_user.privileges}'
-    return render_template('check.html', message = msg)
+    return render_template('user.html', message = msg)
 
 
 @app.route('/admin/')
 @login_required
 def adm_page():
-    msg = f'ROOT_NAME: {current_user.name}, STATUS: {current_user.privileges}'
-    return render_template('admin.html', message = msg)  
+    if current_user.privileges == 'admin':
+        msg = f'ROOT_NAME: {current_user.name}, STATUS: {current_user.privileges}'
+        listX = Users.query.all()
+        users_values = []
+        for userX in listX:
+            users_values.append(userX)
+        print(users_values[0].name)
+        return render_template('admin.html', message = msg, users_values = users_values)
+    else: return 'NO ACCESS'
 
+@app.route('/change/<user_id>')
+@login_required
+def change_user(user_id):
+    if current_user.privileges == 'admin':
+        print(f'change user: {user_id}')
+        return render_template('change.html', message = f'{user_id}')
+    else: return 'NO ACCESS'
 
 if __name__ == "__main__":
     app.run(host='192.168.0.10', port=5050, debug=True)

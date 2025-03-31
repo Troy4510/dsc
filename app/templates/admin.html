@@ -13,4 +13,33 @@
 	{% if message %}
 	<p>{{ message }}</p>
 	{% endif %}
+
+	{% if users_values %}
+	<div class="works_table">
+		<caption>СПИСОК ПОЛЬЗОВАТЕЛЕЙ:</caption>
+		<table border=1 style="width:100%;">
+		<thead>
+			<tr>
+				<th> ID </th>
+				<th> ИМЯ </th>
+				<th> ЛОГИН </th>
+				<th> ПРИВИЛЕГИИ </th>
+				<th> ДЕЙСТВИЕ 1 </th>
+				<th> ДЕЙСТВИЕ 2 </th>
+			</tr>
+		</thead>
+		<tbody>
+		{%for user in users_values%}
+				<tr>
+					<td> {{user.id}} </td>
+					<td> {{user.name}} </td>
+					<td> {{user.email}} </td>
+					<td> {{user.privileges}} </td>
+					<td> <a href = "/change/{{user.id}}" /a> ИЗМЕНИТЬ </td>
+					<td> <a href = "" /a> УДАЛИТЬ</td>
+				</tr>
+				{% endfor %}
+		</tbody>
+	{% endif %}
+	<a href = "" /a> ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ
 </body>
