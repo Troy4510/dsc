@@ -104,6 +104,7 @@ def adm_page():
 @app.route('/change/<user_id>', methods=['post',  'get'])
 @login_required
 def change_user(user_id):
+    #разобраться с post/get
     if current_user.privileges == 'admin':
         '''if request.method == 'GET':
             print('GET METHOD')
