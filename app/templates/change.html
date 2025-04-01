@@ -18,14 +18,18 @@
         <form>
             <p>
             <label for="name">имя</label>
-            <input type="text" id="name" value="Иван Иванов">
+            <input type="text" id="name" value={{user.name}}>
             <br>
-            <label for="name">имя</label>
-            <input type="text" id="name" value="Иван Иванов">
+            <label for="email">логин</label>
+            <input type="text" id="email" value={{user.email}}>
             <br>
-            <label for="name">имя</label>
-            <input type="text" id="name" value="Иван Иванов">
+            <label for="password">пароль</label>
+            <input type="text" id="password" value={{user.password}}>
+            <br>
+            <label for="privileges">права</label>
+            <input type="text" id="privileges" value={{user.privileges}}>
             </p>
+            <input type="submit", method="post">
           </form>
 
 </body>

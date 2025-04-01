@@ -101,13 +101,20 @@ def adm_page():
         return render_template('admin.html', message = msg, users_values = users_values)
     else: return 'NO ACCESS'
 
-@app.route('/change/<user_id>')
+@app.route('/change/<user_id>', methods=['post',  'get'])
 @login_required
 def change_user(user_id):
     if current_user.privileges == 'admin':
-        print(f'change user: {user_id}')
-        return render_template('change.html', message = f'{user_id}')
+        '''if request.method == 'GET':
+            print('GET METHOD')
+            userX = Users.query.filter_by(id=user_id).first()
+            return render_template('change.html', message = f'USER: {userX.name}, ID: {userX.id}', user = userX)'''
+        if request.method == 'POST':
+            print('POST METHOD')
+            username = request.form.get('username')
+            password = request.form.get('password')
+            return 'CHANGED!'
     else: return 'NO ACCESS'
 
 if __name__ == "__main__":
-    app.run(host='192.168.0.10', port=5050, debug=True)
+    app.run(host='127.0.0.1', port=5050, debug=True)
