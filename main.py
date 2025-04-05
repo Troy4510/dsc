@@ -10,7 +10,7 @@ app.config['SECRET_KEY'] = '48_obezyan_v_jopu_sunuli_banan'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://dsc_user:484827548@localhost/dsc_base'
 
 db = SQLAlchemy(app) #передаем sql-алхимику экземпляр приложения
-login_manager = LoginManager(app) #передаем логин-мененджеру экземпляр приложени
+login_manager = LoginManager(app) #передаем логин-мененджеру экземпляр приложения
 
 class Users(db.Model): #класс для алхимика и flask-login
     __tablename__ = 'users'
