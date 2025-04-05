@@ -22,11 +22,9 @@ class Users(db.Model): #класс для алхимика и flask-login
 
     def __init__(self, name, password, email, privileges):
         self. name = name
-        self.password = self.set_password(password)
+        self.password = password
         self.email = email
-        
-    def set_password(self, password):
-        return self.password_hash(password)
+        self.privileges = privileges
     
     def check_password(self, password):
         return check_password_hash(self.password, password)
@@ -52,8 +50,9 @@ def loading_user(user_id):
 @app.route('/')
 @app.route('/index.html')
 def index():
-   return render_template('index.html')
-
+   #return render_template('index.html') потом доделать главную
+    return redirect('/login/')
+    
 @app.route('/login/', methods=['post',  'get'])
 def register_user():
     if request.method == 'POST':
@@ -62,15 +61,15 @@ def register_user():
         
         user = Users.query.filter_by(email=username).first()
         #user = db.session.get(Users).filter_by(email=username).first()
-        print(user.privileges)
+        #print(user.privileges)
         if not user or not user.check_password(password):
             flash('неверные данные аутентификации')
-            return render_template('login.html', message = 'AUTH FAILED')
+            return render_template('login.html', message = 'ОШИБКА АУТЕНТИФИКАЦИИ')
         
         login_user(user)
         
         if user.privileges == 'user':
-            return redirect('/check/')
+            return redirect('/user/')
         elif user.privileges == 'admin':
             return redirect('/admin')    
         
@@ -84,7 +83,7 @@ def check_result():
     #print(dir(current_user))
     #print(db.session.get(Users, 3).id)
     #print(db.session.query(Users).filter_by(id = current_user))
-    msg = f'USERNAME: {current_user.name}, STATUS: {current_user.privileges}'
+    msg = f'СТРАНИЦА ПОЛЬЗОВАТЕЛЯ: {current_user.name}, СТАТУС: {current_user.privileges}'
     return render_template('user.html', message = msg)
 
 
@@ -99,23 +98,51 @@ def adm_page():
             users_values.append(userX)
         print(users_values[0].name)
         return render_template('admin.html', message = msg, users_values = users_values)
-    else: return 'NO ACCESS'
+    else: return 'НЕТ ДОСТУПА'
 
 @app.route('/change/<user_id>', methods=['post',  'get'])
 @login_required
 def change_user(user_id):
     #разобраться с post/get
     if current_user.privileges == 'admin':
-        '''if request.method == 'GET':
-            print('GET METHOD')
+        if request.method == 'GET':
+            #print('GET METHOD')
             userX = Users.query.filter_by(id=user_id).first()
-            return render_template('change.html', message = f'USER: {userX.name}, ID: {userX.id}', user = userX)'''
+            return render_template('change.html', message = f'ИМЯ: {userX.name}, ID: {userX.id}', user = userX)
         if request.method == 'POST':
-            print('POST METHOD')
-            username = request.form.get('username')
-            password = request.form.get('password')
-            return 'CHANGED!'
-    else: return 'NO ACCESS'
+            #print('POST METHOD')
+            curr_id = int(request.form.get('id'))
+            new_name = request.form.get('username')
+            #здесь добавить проверку пароля!
+            new_password = generate_password_hash(request.form.get('password'))
+            new_email = request.form.get('email')
+            new_privileges = request.form.get('privileges')
+            Users.query.filter_by(id = curr_id).update({
+                'name': new_name, 'password' : new_password,
+                'email' : new_email, 'privileges' : new_privileges})
+            db.session.commit()
+            return redirect('/admin')
+    else: return 'НЕТ ДОСТУПА'
 
+@app.route('/register/', methods=['post',  'get'])
+@login_required
+def reg_new_user():
+    if current_user.privileges == 'admin':
+        if request.method == 'POST':
+            username1 = request.form.get('username')
+            raw_pass = request.form.get('password')
+            print(raw_pass)
+            email1 = request.form.get('email')
+            privileges1 = request.form.get('privileges')
+            #try:
+            usr1 = Users(name=username1, password=generate_password_hash(raw_pass), email=email1, privileges=privileges1)
+            db.session.add_all([usr1])
+            db.session.commit()
+            #except: print('error')
+            return redirect('/admin')
+    else: return 'НЕТ ДОСТУПА'
+    return render_template('register.html')
+    
+    
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5050, debug=True)

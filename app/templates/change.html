@@ -9,27 +9,33 @@
 
 
 <body>
-    <h1> CHANGE RECORD <h1>
+    <h1> ИЗМЕНЕНИЕ ЗАПИСИ: <h1>
 
         {% if message %}
         <p>{{ message }}</p>
         {% endif %}
 
-        <form>
+        <form action="#" method="post">
             <p>
-            <label for="name">имя</label>
-            <input type="text" id="name" value={{user.name}}>
+            <label for="id">запись</label>
+            <input type="text" name="id" value={{user.id}} readonly>    
+            <br>
+            <label for="username">имя</label>
+            <input type="text" name="username" value={{user.name}}>
             <br>
             <label for="email">логин</label>
-            <input type="text" id="email" value={{user.email}}>
+            <input type="text" name="email" value={{user.email}}>
             <br>
             <label for="password">пароль</label>
-            <input type="text" id="password" value={{user.password}}>
+            <input type="text" name="password" value="change me!">
             <br>
             <label for="privileges">права</label>
-            <input type="text" id="privileges" value={{user.privileges}}>
+            <input type="text" name="privileges" value={{user.privileges}}>
             </p>
-            <input type="submit", method="post">
+            <input type="submit">
           </form>
 
+        {% if message2 %}
+        <p>{{ message2 }}</p>
+        {% endif %}
 </body>
