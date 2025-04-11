@@ -27,10 +27,18 @@
             <input type="text" name="email" value={{user.email}}>
             <br>
             <label for="password">пароль</label>
-            <input type="text" name="password" value="change me!">
+            <input type="text" name="password" value="оставить старый">
             <br>
             <label for="privileges">права</label>
             <input type="text" name="privileges" value={{user.privileges}}>
+            <br>
+            <label for="blockstate">блокировка</label>
+            {%if user.isblocked == False%}
+            <input type="checkbox" name="blockstate" value="block">
+            {% endif %}
+            {%if user.isblocked == True%}
+            <input type="checkbox" name="blockstate" value="block" checked>
+            {% endif %}
             </p>
             <input type="submit">
           </form>

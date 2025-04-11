@@ -23,9 +23,9 @@
 				<th> ID </th>
 				<th> ИМЯ </th>
 				<th> ЛОГИН </th>
-				<th> ПРИВИЛЕГИИ </th>
-				<th> ДЕЙСТВИЕ 1 </th>
-				<th> ДЕЙСТВИЕ 2 </th>
+				<th> ПРАВА </th>
+				<th> АКТИВНОСТЬ </th>
+				<th> </th>
 			</tr>
 		</thead>
 		<tbody>
@@ -35,11 +35,20 @@
 					<td> {{user.name}} </td>
 					<td> {{user.email}} </td>
 					<td> {{user.privileges}} </td>
+					
+					{% if user.isblocked == False %}
+						<td> активен <td> 
+					{% endif %}
+
+					{% if user.isblocked == True %}
+						<td> заблокирован <td> 
+					{% endif %}
+
 					<td> <a href = "/change/{{user.id}}" /a> ИЗМЕНИТЬ </td>
-					<td> <a href = "" /a> УДАЛИТЬ</td>
 				</tr>
 				{% endfor %}
 		</tbody>
 	{% endif %}
+	<br>
 	<a href = "/register/" /a> ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ
 </body>

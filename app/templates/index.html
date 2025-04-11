@@ -9,5 +9,15 @@
 
 
 <body>
-<h1> MAIN PAGE <h1>
+<h1> ГЛАВНАЯ СТРАНИЦА DSChat <h1>
+
+{% if data %}
+    <p>Ваш IP: {{ data[0] }}</p>
+    <p>Ваш клиент:{{  data[1] }}</p>
+{% endif %}
+
+
+Ссылки:
+<br>
+<a href = "/login/" /a> ВОЙТИ В СИСТЕМУ </td>
 </body>

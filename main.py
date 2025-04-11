@@ -19,6 +19,7 @@ class Users(db.Model): #класс для алхимика и flask-login
     password = db.Column(db.String(500), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     privileges = db.Column(db.String(5), nullable=False)
+    isblocked = db.Column(db.Boolean, default=False)
 
     def __init__(self, name, password, email, privileges):
         self. name = name
@@ -50,8 +51,13 @@ def loading_user(user_id):
 @app.route('/')
 @app.route('/index.html')
 def index():
-   #return render_template('index.html') потом доделать главную
-    return redirect('/login/')
+    val =[]
+    print(request.user_agent)
+    val.append(request.remote_addr)
+    val.append(request.user_agent)
+    print(val)
+    return render_template('index.html', data = val)
+    #return redirect('/login/')
     
 @app.route('/login/', methods=['post',  'get'])
 def register_user():
@@ -80,12 +86,13 @@ def register_user():
 @app.route('/user/')
 @login_required
 def check_result():
-    #print(dir(current_user))
-    #print(db.session.get(Users, 3).id)
-    #print(db.session.query(Users).filter_by(id = current_user))
-    msg = f'СТРАНИЦА ПОЛЬЗОВАТЕЛЯ: {current_user.name}, СТАТУС: {current_user.privileges}'
-    return render_template('user.html', message = msg)
-
+    if not current_user.isblocked:
+        msg = f'СТРАНИЦА ПОЛЬЗОВАТЕЛЯ: {current_user.name},СТАТУС: {current_user.privileges}'
+        print(current_user.isblocked)
+        return render_template('user.html', message = msg)
+    else:
+        msg = f'ПОЛЬЗОВАТЕЛЬ {current_user.name} ЗАБЛОКИРОВАН, ОБРАТИТЕСЬ К АДМИНИСТРАТОРУ'
+        return render_template('user.html', message = msg)
 
 @app.route('/admin/')
 @login_required
@@ -113,15 +120,25 @@ def change_user(user_id):
             #print('POST METHOD')
             curr_id = int(request.form.get('id'))
             new_name = request.form.get('username')
-            #здесь добавить проверку пароля!
-            new_password = generate_password_hash(request.form.get('password'))
             new_email = request.form.get('email')
             new_privileges = request.form.get('privileges')
-            Users.query.filter_by(id = curr_id).update({
-                'name': new_name, 'password' : new_password,
-                'email' : new_email, 'privileges' : new_privileges})
+            
+            if request.form.get('blockstate'): new_blockstate = True
+            else: new_blockstate = False
+            
+            if request.form.get('password') == 'оставить старый':
+                Users.query.filter_by(id = curr_id).update({
+                    'name': new_name, 'email' : new_email, 
+                    'privileges' : new_privileges, 'isblocked' : new_blockstate})
+            else:
+                new_password = generate_password_hash(request.form.get('password'))
+                Users.query.filter_by(id = curr_id).update({
+                    'name': new_name, 'password' : new_password, 'email' : new_email, 
+                    'privileges' : new_privileges, 'isblocked' : new_blockstate})
+            
             db.session.commit()
             return redirect('/admin')
+        
     else: return 'НЕТ ДОСТУПА'
 
 @app.route('/register/', methods=['post',  'get'])

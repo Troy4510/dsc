@@ -19,6 +19,7 @@ class Users(db.Model):
     password = db.Column(db.String(500), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     privileges = db.Column(db.String(5), nullable=False)
+    isBlocked = db.Column(db.Boolean, default=False)
     def set_password(self,password):
         self.password_hash = generate_password_hash(password)
     def check_password(self, password):
