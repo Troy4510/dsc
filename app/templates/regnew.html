@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация нового пользователя</title>
+</head>
+<body>
+
+    {% if message %}
+        {{ message }}
+    {% endif %}
+    
+    <form action="" method="post">
+	<p>
+			<label for="nickname">ИМЯ</label>
+			<input type="text" name="nickname">
+			{{nick_msg}}
+	</p>
+        <p>
+	    <label for="email">E-MAIL</label>
+	    <input type="text" name="email">
+		{{email_msg}}
+	</p>
+	<p>
+	    <label for="password1">ПАРОЛЬ</label>
+	    <input type="password" name="password1">
+		{{password_msg}}
+	</p>
+	<p>
+	    <label for="password2">ПАРОЛЬ</label>
+	    <input type="password" name="password2">
+		{{password_msg}}
+	</p>
+	<p>
+	    <input type="submit">
+	</p>
+
+    </form>
+
+</body>
+</html>

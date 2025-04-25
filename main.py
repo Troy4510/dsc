@@ -80,7 +80,7 @@ def register_user():
             return redirect('/admin')    
         
         
-    return render_template('login.html', message = 'LOGIN PAGE')
+    return render_template('login.html', message = 'ВХОД:')
 
 
 @app.route('/user/')
@@ -160,6 +160,37 @@ def reg_new_user():
     else: return 'НЕТ ДОСТУПА'
     return render_template('register.html')
     
-    
+@app.route('/regnew/', methods=['post','get'])
+def try_add_user():
+    if request.method == 'POST':
+            val_is_ok = True
+            pass_check = True
+            tmp_name = request.form.get('nickname')
+            tmp_email = request.form.get('email')
+            tmp_password1 = request.form.get('password1')
+            tmp_password2 = request.form.get('password2')
+            nick_msg = email_msg = password_msg = 'ok'
+            #проверка почты, имени и пароля
+            email_check = Users.query.filter_by(email=tmp_email).first()
+            name_check = Users.query.filter_by(name=tmp_name).first()
+            pass_check = (len(tmp_password1)>5) and (tmp_password1 == tmp_password2)
+            if email_check: val_is_ok = False; email_msg = 'такой e-mail уже есть в базе'
+            if name_check: val_is_ok = False; nick_msg = 'придумайте другое имя'
+            if not pass_check: password_msg = 'пароли не совпадают или длинна менее 6 символов'
+            if not val_is_ok or not pass_check:
+                return render_template('regnew.html', message = 'РЕГИСТРАЦИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ', 
+                            nick_msg = nick_msg, email_msg = email_msg, password_msg = password_msg)
+            else:
+                usr1 = Users(name=tmp_name, password=generate_password_hash(tmp_password1),
+                             email=tmp_email, privileges='user')
+                db.session.add_all([usr1])
+                db.session.commit()
+                return 'Пользователь успешно зарегистрирован, <a href = "/login/" /a> ВОЙТИ В СИСТЕМУ'
+            
+    if request.method == 'GET':
+            return render_template('regnew.html', message = 'РЕГИСТРАЦИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ', 
+                                   nick_msg = 'введите имя', email_msg = 'введите адрес почты',
+                                   password_msg = 'введите пароль не менее 6 символов')
+
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=5050, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
