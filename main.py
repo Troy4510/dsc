@@ -176,6 +176,7 @@ def try_add_user():
             pass_check = (len(tmp_password1)>5) and (tmp_password1 == tmp_password2)
             if email_check: val_is_ok = False; email_msg = 'такой e-mail уже есть в базе'
             if name_check: val_is_ok = False; nick_msg = 'придумайте другое имя'
+            if len(tmp_name)<4: val_is_ok = False; nick_msg = 'имя слишком короткое (менее 4 символов)'
             if not pass_check: password_msg = 'пароли не совпадают или длинна менее 6 символов'
             if not val_is_ok or not pass_check:
                 return render_template('regnew.html', message = 'РЕГИСТРАЦИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ', 
@@ -189,8 +190,9 @@ def try_add_user():
             
     if request.method == 'GET':
             return render_template('regnew.html', message = 'РЕГИСТРАЦИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ', 
-                                   nick_msg = 'введите имя', email_msg = 'введите адрес почты',
-                                   password_msg = 'введите пароль не менее 6 символов')
+                                   nick_msg = 'введите имя (минимум 4 символа)',
+                                   email_msg = 'введите адрес почты',
+                                   password_msg = 'введите пароль (минимум 6 символов)')
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5050, debug=True)
