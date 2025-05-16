@@ -172,9 +172,17 @@ def try_add_user():
             nick_msg = email_msg = password_msg = 'ok'
             #проверка почты, имени и пароля
             email_check = Users.query.filter_by(email=tmp_email).first()
+            email_test1 = tmp_email.find('@')
+            email_test2 = tmp_email.find('.', tmp_email.find('@')) > 2
+            email_test3 = tmp_email.find('.', len(tmp_email)-5) < len(tmp_email)-1
+            if email_test1==email_test2==email_test3==True: email_test = True
+            else: email_test = False
             name_check = Users.query.filter_by(name=tmp_name).first()
             pass_check = (len(tmp_password1)>5) and (tmp_password1 == tmp_password2)
             if email_check: val_is_ok = False; email_msg = 'такой e-mail уже есть в базе'
+            if email_test == False: 
+                email_msg = 'неправильно введён email'
+                val_is_ok = False
             if name_check: val_is_ok = False; nick_msg = 'придумайте другое имя'
             if len(tmp_name)<4: val_is_ok = False; nick_msg = 'имя слишком короткое (менее 4 символов)'
             if not pass_check: password_msg = 'пароли не совпадают или длинна менее 6 символов'
