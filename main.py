@@ -10,6 +10,7 @@ app = Flask(__name__, template_folder = 'app/templates', static_folder = 'app/st
 app.config['SECRET_KEY'] = '48_obezyan_v_jopu_sunuli_banan'
 #app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=1)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://dsc_user:484827548@localhost/dsc_base'
+#upload_folder = './main/app/static/avatars'
 upload_folder = './main/app/static/avatars'
 if not os.path.exists(upload_folder):
     os.makedirs(upload_folder)
@@ -101,7 +102,11 @@ def register_user():
 @app.route('/user/')
 @login_required
 def check_result():
-    ava = '/static/avatars/' + current_user.ava_link
+    if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link):
+        ava = '/static/avatars/' + '/' + current_user.ava_link
+    else: 
+        ava = '/static/avatars/' + '/default.png'
+    
     if not current_user.isblocked:
         msg = f'СТРАНИЦА ПОЛЬЗОВАТЕЛЯ: {current_user.name}, СТАТУС: {current_user.privileges}'
         #test = os.listdir('./main/app/avatars/')
