@@ -2,15 +2,24 @@ from flask import  Flask, request, session, render_template, flash, redirect  #,
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
-#import datetime
+import os
+import random
+import datetime
 
 app = Flask(__name__, template_folder = 'app/templates', static_folder = 'app/static')
 app.config['SECRET_KEY'] = '48_obezyan_v_jopu_sunuli_banan'
 #app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=1)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://dsc_user:484827548@localhost/dsc_base'
+upload_folder = './main/app/static/avatars'
+if not os.path.exists(upload_folder):
+    os.makedirs(upload_folder)
+app.config['UPLOAD_FOLDER'] = upload_folder
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 db = SQLAlchemy(app) #передаем sql-алхимику экземпляр приложения
 login_manager = LoginManager(app) #передаем логин-мененджеру экземпляр приложения
+
 
 class Users(db.Model): #класс для алхимика и flask-login
     __tablename__ = 'users'
@@ -20,12 +29,14 @@ class Users(db.Model): #класс для алхимика и flask-login
     email = db.Column(db.String(50), unique=True, nullable=False)
     privileges = db.Column(db.String(5), nullable=False)
     isblocked = db.Column(db.Boolean, default=False)
+    ava_link = db.Column(db.String(100), default = 'default.png')
 
-    def __init__(self, name, password, email, privileges):
+    def __init__(self, name, password, email, privileges, ava_link):
         self. name = name
         self.password = password
         self.email = email
         self.privileges = privileges
+        self.ava_link = ava_link
     
     def check_password(self, password):
         return check_password_hash(self.password, password)
@@ -41,7 +52,11 @@ class Users(db.Model): #класс для алхимика и flask-login
     
     def get_id(self):
         return str(self.id)
-    
+'''
+def createdb():
+    db.create_all()
+    return 'DB created'
+'''
      
 @login_manager.user_loader
 def loading_user(user_id):
@@ -86,25 +101,28 @@ def register_user():
 @app.route('/user/')
 @login_required
 def check_result():
+    ava = '/static/avatars/' + current_user.ava_link
     if not current_user.isblocked:
-        msg = f'СТРАНИЦА ПОЛЬЗОВАТЕЛЯ: {current_user.name},СТАТУС: {current_user.privileges}'
-        print(current_user.isblocked)
-        return render_template('user.html', message = msg)
+        msg = f'СТРАНИЦА ПОЛЬЗОВАТЕЛЯ: {current_user.name}, СТАТУС: {current_user.privileges}'
+        #test = os.listdir('./main/app/avatars/')
+        return render_template('user.html', message = msg, avatar = ava)
     else:
         msg = f'ПОЛЬЗОВАТЕЛЬ {current_user.name} ЗАБЛОКИРОВАН, ОБРАТИТЕСЬ К АДМИНИСТРАТОРУ'
-        return render_template('user.html', message = msg)
+        return render_template('blocked.html', message = msg, avatar = ava)
 
 @app.route('/admin/')
 @login_required
 def adm_page():
     if current_user.privileges == 'admin':
         msg = f'ROOT_NAME: {current_user.name}, STATUS: {current_user.privileges}'
+        ava = '/static/avatars/' + current_user.ava_link
         listX = Users.query.all()
         users_values = []
         for userX in listX:
             users_values.append(userX)
         print(users_values[0].name)
-        return render_template('admin.html', message = msg, users_values = users_values)
+        return render_template('admin.html', message = msg,
+                               avatar = ava, users_values = users_values)
     else: return 'НЕТ ДОСТУПА'
 
 @app.route('/change/<user_id>', methods=['post',  'get'])
@@ -201,6 +219,87 @@ def try_add_user():
                                    nick_msg = 'введите имя (минимум 4 символа)',
                                    email_msg = 'введите адрес почты',
                                    password_msg = 'введите пароль (минимум 6 символов)')
+
+@app.route('/user_editing/', methods=['post','get'])
+@login_required
+def user_editing():
+    if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link):
+        ava = '/static/avatars/' + current_user.ava_link
+    else: 
+        ava = app.config['UPLOAD_FOLDER'] + '/' + 'default.png'
+    userX = Users.query.filter_by(id=current_user.id).first()
+    
+    if request.method == 'GET':
+        if current_user.privileges == 'user':   
+            return render_template('user_editing.html', avatar = ava, user = userX)
+
+    if request.method == 'POST':
+        print(request.form)
+        tmp_password1 = request.form.get('password1')
+        tmp_password2 = request.form.get('password2')
+        if tmp_password1 == tmp_password2 == 'оставить старый':
+            return redirect ('/user_editing/')
+        else:
+            pass_check = (len(tmp_password1)>5) and (tmp_password1 == tmp_password2)
+            if not pass_check:
+                password_msg = 'пароли не совпадают или длинна менее 6 символов'
+                return render_template('user_editing.html', avatar = ava,
+                                       password_msg = password_msg, user = userX)
+                
+            if pass_check:
+                password_msg = 'пароль успешно изменен'
+                new_password = generate_password_hash(tmp_password1)
+                Users.query.filter_by(id = current_user.id).update({'password' : new_password})
+                db.session.commit()
+                return render_template('user_editing.html', avatar = ava,
+                                       password_msg = password_msg, user = userX)
+    
+
+
+@app.route('/upload', methods=['POST'])#указан в user_editing.html
+@login_required
+def upload_file():
+    if 'file' not in request.files:
+        return 'файл не выбран', 400
+
+    file = request.files['file']
+    
+    if file.filename == '':
+        return 'файл не выбран', 400
+    
+    #проверка и изменение имени файла и расширения
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    ext1 = file.filename.rsplit('.', 1)
+        
+    if ext1[1] in ALLOWED_EXTENSIONS:
+        #print(f'{ext1[1]} в разрешенных расширениях')
+        now = datetime.datetime.now()
+        formatted_date = now.strftime("%Y_%m_%d_%H_%M_%S_")
+        new_filename = formatted_date + str(random.randrange(5000)) + '.' + ext1[1]
+        #print(f'новое имя файла: {new_filename}')
+        file.filename = new_filename
+        #print(f'текущий пользователь: {current_user.name}')
+        #print(f'текущий пользователь: {current_user.id}')
+        #удаление файла старой аватарки и проверка на default
+        if current_user.ava_link == 'default.png':
+            Users.query.filter_by(id = current_user.id).update({'ava_link' : new_filename})
+        else:
+            target1 = current_user.ava_link
+            print(f'current: "{target1}"')
+            if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + target1):
+                os.remove(app.config['UPLOAD_FOLDER'] + '/' + target1)
+            Users.query.filter_by(id = current_user.id).update({'ava_link' : new_filename})
+        
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        db.session.commit()
+        return redirect('/user_editing/')
+    else:
+        return f'расширение {ext1[1]} не разрешено'
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5050, debug=True)

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>DSC</title>
+</head>
+
+
+<body>
+    <h1> СМЕНА АВАТАРА <h1>
+
+    {%if avatar %}
+        <img src={{avatar}} style="width: 10%; height: auto;" alt="default">
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" action="/upload">
+        <input type="file" name="file">
+        <input type="submit" value="загрузить">
+    </form>
+    <br>
+
+    <h1> СМЕНА ПАРОЛЯ <h1>
+
+    <form action="" method="POST">
+        <p>
+        <label for="username">имя</label>
+        <input type="text" name="username" value={{user.name}} readonly>
+        <br>
+        <label for="email">логин</label>
+        <input type="text" name="email" value={{user.email}} readonly>
+        <br>
+        <label for="password">новый пароль</label>
+        <input type="text" name="password1" value="оставить старый">
+        {{password_msg}}
+        <br>
+        <label for="password">новый пароль</label>
+        <input type="text" name="password2" value="оставить старый">
+        {{password_msg}}
+        <br>
+            <input type="submit">
+        </p>
+    </form>
+
+    <a href = "/user/" /a> НАЗАД
+
+</body>
+</html>

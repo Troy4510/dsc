@@ -10,6 +10,10 @@
 
 <body>
 <h1> ADMIN PAGE <h1>
+	{%if avatar %}
+        <img src={{avatar}} style="width: 10%; height: auto;" alt="default">
+    {% endif %}
+
 	{% if message %}
 	<p>{{ message }}</p>
 	{% endif %}
