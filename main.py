@@ -231,7 +231,7 @@ def user_editing():
     if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link):
         ava = '/static/avatars/' + current_user.ava_link
     else: 
-        ava = app.config['UPLOAD_FOLDER'] + '/' + 'default.png'
+        ava = '/static/avatars/' + 'default.png'
     userX = Users.query.filter_by(id=current_user.id).first()
     
     if request.method == 'GET':
