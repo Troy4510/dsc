@@ -11,13 +11,15 @@
 <body>
 <h1> USER PAGE <h1>
     {%if avatar %}
-        <img src={{avatar}} style="width: 10%; height: auto;">
+    <img src={{url_for('static', filename='avatars/' + avatar)}} style="width: 10%; height: auto;">
     {% endif %}
+
     <br>
+    
     {% if message %}
         <p> {{message}}</p>
     {% endif %}
 
-    <a href = "/user_editing/" /a> ИЗМЕНИТЬ ПАРОЛЬ ИЛИ АВАТАР 
+    <a href = "/user_editing/" /a> ИЗМЕНИТЬ ПАРОЛЬ ИЛИ АВАТАР
 
 </body>

@@ -11,7 +11,7 @@
     <h1> СМЕНА АВАТАРА <h1>
 
     {%if avatar %}
-        <img src={{avatar}} style="width: 10%; height: auto;">
+        <img src={{url_for('static', filename='avatars/' + avatar)}} style="width: 10%; height: auto;">
     {% endif %}
 
     <form method="POST" enctype="multipart/form-data" action="/upload">

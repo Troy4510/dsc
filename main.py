@@ -1,6 +1,6 @@
-from flask import  Flask, request, session, render_template, flash, redirect  #, url_for
+from flask import  Flask, request, session, render_template, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_user, login_required, current_user
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
 import os
 import random
@@ -8,12 +8,13 @@ import datetime
 
 app = Flask(__name__, template_folder = 'app/templates', static_folder = 'app/static')
 app.config['SECRET_KEY'] = '48_obezyan_v_jopu_sunuli_banan'
-#app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=1)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://dsc_user:484827548@localhost/dsc_base'
-#upload_folder = './main/app/static/avatars'
 upload_folder = './main/app/static/avatars'
-if not os.path.exists(upload_folder):
-    os.makedirs(upload_folder)
+
+#if not os.path.exists(upload_folder):
+#    print(f'создание папки загрузки ')
+#    os.makedirs(upload_folder)
+    
 app.config['UPLOAD_FOLDER'] = upload_folder
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -103,13 +104,18 @@ def register_user():
 @login_required
 def check_result():
     if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link):
-        ava = '/static/avatars/' + current_user.ava_link
-    else: 
-        ava = '/static/avatars/' + 'default.png'
+        #print(f'аватар найден {app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link}')
+        #print(os.listdir(app.config['UPLOAD_FOLDER']))
+        ava = current_user.ava_link
+        #print(current_user.ava_link)
+    else:
+        print(f'аватар не найден {app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link}')
+        print(os.listdir(app.config['UPLOAD_FOLDER']))
+        ava = 'default.png'
+        print(ava)
     
     if not current_user.isblocked:
         msg = f'СТРАНИЦА ПОЛЬЗОВАТЕЛЯ: {current_user.name}, СТАТУС: {current_user.privileges}'
-        #test = os.listdir('./main/app/avatars/')
         return render_template('user.html', message = msg, avatar = ava)
     else:
         msg = f'ПОЛЬЗОВАТЕЛЬ {current_user.name} ЗАБЛОКИРОВАН, ОБРАТИТЕСЬ К АДМИНИСТРАТОРУ'
@@ -229,9 +235,10 @@ def try_add_user():
 @login_required
 def user_editing():
     if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link):
-        ava = '/static/avatars/' + current_user.ava_link
+        ava = current_user.ava_link
+        print(f'файл аватара найден: {app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link}')
     else: 
-        ava = '/static/avatars/' + 'default.png'
+        ava = 'default.png'
     userX = Users.query.filter_by(id=current_user.id).first()
     
     if request.method == 'GET':
@@ -301,9 +308,14 @@ def upload_file():
     else:
         return f'расширение {ext1[1]} не разрешено'
 
-
-
-
+'''
+@app.route("/logout/")
+@login_required
+def logout():
+    logout_user()
+    return "Вы успешно вышли из системы!"
+эта хуита не работает (ошибки flask utils)
+'''
 
 
 if __name__ == "__main__":
