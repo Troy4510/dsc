@@ -103,9 +103,9 @@ def register_user():
 @login_required
 def check_result():
     if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link):
-        ava = '/static/avatars/' + '/' + current_user.ava_link
+        ava = '/static/avatars/' + current_user.ava_link
     else: 
-        ava = '/static/avatars/' + '/default.png'
+        ava = '/static/avatars/' + 'default.png'
     
     if not current_user.isblocked:
         msg = f'СТРАНИЦА ПОЛЬЗОВАТЕЛЯ: {current_user.name}, СТАТУС: {current_user.privileges}'
