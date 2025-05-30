@@ -162,7 +162,7 @@ def change_user(user_id):
             
             if request.form.get('ava_reset'):
                 target1 = userX.ava_link
-                if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + target1):
+                if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + target1) and target1 != 'default.png':
                     os.remove(app.config['UPLOAD_FOLDER'] + '/' + target1) 
                 new_ava = 'default.png'
             else:
