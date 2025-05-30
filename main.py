@@ -11,9 +11,9 @@ app.config['SECRET_KEY'] = '48_obezyan_v_jopu_sunuli_banan'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://dsc_user:484827548@localhost/dsc_base'
 upload_folder = './main/app/static/avatars'
 
-#if not os.path.exists(upload_folder):
-#    print(f'создание папки загрузки ')
-#    os.makedirs(upload_folder)
+if not os.path.exists(upload_folder):
+    print(f'создание папки загрузки ')
+    os.makedirs(upload_folder)
     
 app.config['UPLOAD_FOLDER'] = upload_folder
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
