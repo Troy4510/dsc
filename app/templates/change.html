@@ -14,7 +14,7 @@
         {% if message %}
         <p>{{ message }}</p>
         {% endif %}
-
+        <img src={{url_for('static', filename='avatars/' + avatar)}} style="width: 10%; height: auto;">
         <form action="#" method="post">
             <p>
             <label for="id">запись</label>
@@ -32,13 +32,16 @@
             <label for="privileges">права</label>
             <input type="text" name="privileges" value={{user.privileges}}>
             <br>
-            <label for="blockstate">блокировка</label>
+            <label for="blockstate">блокировать</label>
             {%if user.isblocked == False%}
             <input type="checkbox" name="blockstate" value="block">
             {% endif %}
             {%if user.isblocked == True%}
             <input type="checkbox" name="blockstate" value="block" checked>
             {% endif %}
+            <br>
+            <label for="ava_reset">удалить аватар</label>
+            <input type="checkbox" name="ava_reset" value="block">
             </p>
             <input type="submit">
           </form>

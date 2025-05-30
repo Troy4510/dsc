@@ -109,8 +109,8 @@ def check_result():
         ava = current_user.ava_link
         #print(current_user.ava_link)
     else:
-        print(f'аватар не найден {app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link}')
-        print(os.listdir(app.config['UPLOAD_FOLDER']))
+        #print(f'аватар не найден {app.config['UPLOAD_FOLDER'] + '/' + current_user.ava_link}')
+        #print(os.listdir(app.config['UPLOAD_FOLDER']))
         ava = 'default.png'
         print(ava)
     
@@ -144,9 +144,14 @@ def change_user(user_id):
         if request.method == 'GET':
             #print('GET METHOD')
             userX = Users.query.filter_by(id=user_id).first()
-            return render_template('change.html', message = f'ИМЯ: {userX.name}, ID: {userX.id}', user = userX)
+            if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + userX.ava_link):
+                ava = userX.ava_link
+            else: ava = ava = 'default.png'
+            return render_template('change.html', avatar = ava,
+                                   message = f'ИМЯ: {userX.name}, ID: {userX.id}', user = userX)
         if request.method == 'POST':
             #print('POST METHOD')
+            userX = Users.query.filter_by(id=user_id).first()
             curr_id = int(request.form.get('id'))
             new_name = request.form.get('username')
             new_email = request.form.get('email')
@@ -155,15 +160,25 @@ def change_user(user_id):
             if request.form.get('blockstate'): new_blockstate = True
             else: new_blockstate = False
             
+            if request.form.get('ava_reset'):
+                target1 = userX.ava_link
+                if os.path.exists(app.config['UPLOAD_FOLDER'] + '/' + target1):
+                    os.remove(app.config['UPLOAD_FOLDER'] + '/' + target1) 
+                new_ava = 'default.png'
+            else:
+                new_ava = userX.ava_link
+            
             if request.form.get('password') == 'оставить старый':
                 Users.query.filter_by(id = curr_id).update({
                     'name': new_name, 'email' : new_email, 
-                    'privileges' : new_privileges, 'isblocked' : new_blockstate})
+                    'privileges' : new_privileges,
+                    'isblocked' : new_blockstate, 'ava_link' : new_ava})
             else:
                 new_password = generate_password_hash(request.form.get('password'))
                 Users.query.filter_by(id = curr_id).update({
                     'name': new_name, 'password' : new_password, 'email' : new_email, 
-                    'privileges' : new_privileges, 'isblocked' : new_blockstate})
+                    'privileges' : new_privileges,
+                    'isblocked' : new_blockstate, 'ava_link' : new_ava})
             
             db.session.commit()
             return redirect('/admin')
@@ -221,8 +236,8 @@ def try_add_user():
             else:
                 usr1 = Users(name=tmp_name, password=generate_password_hash(tmp_password1),
                              email=tmp_email, privileges='user')
-                db.session.add_all([usr1])
-                db.session.commit()
+                #db.session.add_all([usr1])
+                #db.session.commit()
                 return 'Пользователь успешно зарегистрирован, <a href = "/login/" /a> ВОЙТИ В СИСТЕМУ'
             
     if request.method == 'GET':
@@ -246,7 +261,7 @@ def user_editing():
             return render_template('user_editing.html', avatar = ava, user = userX)
 
     if request.method == 'POST':
-        print(request.form)
+        #print(request.form)
         tmp_password1 = request.form.get('password1')
         tmp_password2 = request.form.get('password2')
         if tmp_password1 == tmp_password2 == 'оставить старый':
