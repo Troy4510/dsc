@@ -72,7 +72,7 @@ def index():
     print(request.user_agent)
     val.append(request.remote_addr)
     val.append(request.user_agent)
-    print(val)
+    #print(val)
     return render_template('index.html', data = val)
     #return redirect('/login/')
     
@@ -94,7 +94,7 @@ def register_user():
         if user.privileges == 'user':
             return redirect('/user/')
         elif user.privileges == 'admin':
-            return redirect('/admin')    
+            return redirect('/admin/1')    
         
         
     return render_template('login.html', message = 'ВХОД:')
@@ -121,19 +121,43 @@ def check_result():
         msg = f'ПОЛЬЗОВАТЕЛЬ {current_user.name} ЗАБЛОКИРОВАН, ОБРАТИТЕСЬ К АДМИНИСТРАТОРУ'
         return render_template('blocked.html', message = msg, avatar = ava)
 
-@app.route('/admin/')
+@app.route('/admin/<page>', methods=['post',  'get'])
 @login_required
-def adm_page():
+def adm_page(page):
+    records = Users.query.order_by(Users.id).all()
+    current_page = int(page)
+    if current_page < 1: current_page = 1
+    max_records = len(records)
+    pages_count = int(max_records/10)+1
+    if current_page > pages_count: current_page = pages_count
+    start_reading = current_page * 10 - 10
+    '''
+    #print(start_reading)
+    #print(f"page = {page}")
+    #print(max_page)
+    #print(pages_count) 
+    #отбросить дроби и прибавить 1
+    #дальше от 0 до 9(если есть), и от 10 до 19 (если есть) и т.д.
+    records1 = Users.query.order_by(Users.id).offset(0).limit(10).all()
+    print(len(records1))
+    print(records1)
+    records2 = Users.query.order_by(Users.id).offset(10).limit(10).all()
+    print(len(records2))
+    print(records2)
+    for i in range(0, 10):pass
+    '''
+    
     if current_user.privileges == 'admin':
         msg = f'ROOT_NAME: {current_user.name}, STATUS: {current_user.privileges}'
         ava = '/static/avatars/' + current_user.ava_link
-        listX = Users.query.all()
+        listX = Users.query.order_by(Users.id).offset(start_reading).limit(10).all()
+        #print(len(listX))
         users_values = []
         for userX in listX:
             users_values.append(userX)
-        print(users_values[0].name)
+        #print(users_values[0].name)
         return render_template('admin.html', message = msg,
-                               avatar = ava, users_values = users_values)
+                               avatar = ava, users_values = users_values, page_num = current_page)
     else: return 'НЕТ ДОСТУПА'
 
 @app.route('/change/<user_id>', methods=['post',  'get'])
@@ -181,7 +205,7 @@ def change_user(user_id):
                     'isblocked' : new_blockstate, 'ava_link' : new_ava})
             
             db.session.commit()
-            return redirect('/admin')
+            return redirect('/admin/')
         
     else: return 'НЕТ ДОСТУПА'
 

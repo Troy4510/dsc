@@ -48,11 +48,19 @@
 						<td> заблокирован <td> 
 					{% endif %}
 
-					<td> <a href = "/change/{{user.id}}" /a> ИЗМЕНИТЬ </td>
+					<td> <a href = "/change/{{user.id}}">ИЗМЕНИТЬ</a> </td>
 				</tr>
 				{% endfor %}
 		</tbody>
 	{% endif %}
+	</div>
 	<br>
-	<a href = "/register/" /a> ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ
+	<a href = "/register/"> ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ </a>
+	<br>
+	<br>
+	СТРАНИЦА: {{page_num}}
+	<br>
+	<a href = "/admin/{{page_num+1}}">вперёд</a>
+	<br>
+	<a href = "/admin/{{page_num-1}}">назад</a>
 </body>
