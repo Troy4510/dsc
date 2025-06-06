@@ -196,7 +196,8 @@ def reg_new_user():
             email1 = request.form.get('email')
             privileges1 = request.form.get('privileges')
             #try:
-            usr1 = Users(name=username1, password=generate_password_hash(raw_pass), email=email1, privileges=privileges1)
+            usr1 = Users(name=username1, password=generate_password_hash(raw_pass),
+                         email=email1, privileges=privileges1, ava_link='default.png')
             db.session.add_all([usr1])
             db.session.commit()
             #except: print('error')
@@ -247,7 +248,8 @@ def try_add_user():
             if not pass_check: password_msg = 'пароли не совпадают или длинна менее 6 символов'
             if not val_is_ok or not pass_check:
                 return render_template('regnew.html', message = 'РЕГИСТРАЦИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ', 
-                            nick_msg = nick_msg, email_msg = email_msg, password_msg = password_msg)
+                            nick_msg = nick_msg, email_msg = email_msg, 
+                            password_msg = password_msg, ava_link = 'default.png')
             else:
                 usr1 = Users(name=tmp_name, password=generate_password_hash(tmp_password1),
                              email=tmp_email, privileges='user')
