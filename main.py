@@ -216,10 +216,25 @@ def try_add_user():
             nick_msg = email_msg = password_msg = 'ok'
             #проверка почты, имени и пароля
             email_check = Users.query.filter_by(email=tmp_email).first()
+            '''
             email_test1 = tmp_email.find('@')
             email_test2 = tmp_email.find('.', tmp_email.find('@')) > 2
             email_test3 = tmp_email.find('.', len(tmp_email)-5) < len(tmp_email)-1
-            if email_test1==email_test2==email_test3==True: email_test = True
+            '''
+            #(есть символ "@" и он не в начале) &&
+            #(символ "@" делит адрес надвое и он единственный) &&
+            #(символ "@" не в конце)
+            email_test1 = (tmp_email.find('@') > 0) \
+                and (len(tmp_email.split('@'))==2)\
+                and (tmp_email.rfind('@') != len(tmp_email)-1)
+    
+            #('.' присутствует) && (минимум 2 символа после '.') &&
+            #(между '@' и '.' минимум 2 символа)
+            email_test2 = (tmp_email.find('.') > 0) \
+                and (tmp_email.rfind('.') < len(tmp_email)-2) \
+                and (tmp_email.rfind('.') - tmp_email.rfind('@')>2)
+            
+            if email_test1==email_test2==True: email_test = True
             else: email_test = False
             name_check = Users.query.filter_by(name=tmp_name).first()
             pass_check = (len(tmp_password1)>5) and (tmp_password1 == tmp_password2)
