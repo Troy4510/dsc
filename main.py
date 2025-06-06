@@ -252,9 +252,9 @@ def try_add_user():
                             password_msg = password_msg, ava_link = 'default.png')
             else:
                 usr1 = Users(name=tmp_name, password=generate_password_hash(tmp_password1),
-                             email=tmp_email, privileges='user')
-                #db.session.add_all([usr1])
-                #db.session.commit()
+                             email=tmp_email, privileges='user', ava_link = 'default.png')
+                db.session.add_all([usr1])
+                db.session.commit()
                 return 'Пользователь успешно зарегистрирован, <a href = "/login/" /a> ВОЙТИ В СИСТЕМУ'
             
     if request.method == 'GET':
