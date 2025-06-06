@@ -205,7 +205,7 @@ def change_user(user_id):
                     'isblocked' : new_blockstate, 'ava_link' : new_ava})
             
             db.session.commit()
-            return redirect('/admin/')
+            return redirect('/admin/1')
         
     else: return 'НЕТ ДОСТУПА'
 
@@ -225,7 +225,7 @@ def reg_new_user():
             db.session.add_all([usr1])
             db.session.commit()
             #except: print('error')
-            return redirect('/admin')
+            return redirect('/admin/1')
     else: return 'НЕТ ДОСТУПА'
     return render_template('register.html')
     
