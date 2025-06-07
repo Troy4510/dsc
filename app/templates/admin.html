@@ -4,63 +4,78 @@
 
 <head>
 	<meta charset="UTF-8">
+	<link rel="stylesheet" href="/static/style.css">
 	<title>DSC</title>
 </head>
 
 
 <body>
-<h1> ADMIN PAGE <h1>
-	{%if avatar %}
-        <img src={{avatar}} style="width: 10%; height: auto;" alt="default">
-    {% endif %}
+	<div class="header">
+		<h1> ADMIN PAGE <h1>
+	</div>
 
-	{% if message %}
-	<p>{{ message }}</p>
-	{% endif %}
+	<div class="avatar">
+		{%if avatar %}
+        	<img src={{avatar}} alt="default">
+    	{% endif %}
+		<div class="message">
+			{% if message %}
+				<h2>{{message|safe|e}}</h2>
+			{% endif %}
+		</div>
+	</div>
+
 
 	{% if users_values %}
 	<div class="works_table">
-		<caption>СПИСОК ПОЛЬЗОВАТЕЛЕЙ:</caption>
-		<table border=1 style="width:100%;">
-		<thead>
-			<tr>
-				<th> ID </th>
-				<th> ИМЯ </th>
-				<th> ЛОГИН </th>
-				<th> ПРАВА </th>
-				<th> АКТИВНОСТЬ </th>
-				<th> </th>
-			</tr>
-		</thead>
-		<tbody>
-		{%for user in users_values%}
+
+		<h3>ОПЕРАЦИИ С БАЗОЙ ПОЛЬЗОВАТЕЛЕЙ:
+			<a href = "/register/"> ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ </a>
+		</h3>
+
+		<h3 style="text-align: center;">
+			<a href = "/admin/{{page_num-1}}" style="text-decoration: none;"> &lt;&lt;&lt; </a>
+			{{page_num}}
+			<a href = "/admin/{{page_num+1}}" style="text-decoration: none;"> &gt;&gt;&gt; </a>
+		</h3>
+		<table border=1>
+			<thead>
 				<tr>
-					<td> {{user.id}} </td>
-					<td> {{user.name}} </td>
-					<td> {{user.email}} </td>
-					<td> {{user.privileges}} </td>
-					
-					{% if user.isblocked == False %}
-						<td> активен <td> 
-					{% endif %}
-
-					{% if user.isblocked == True %}
-						<td> заблокирован <td> 
-					{% endif %}
-
-					<td> <a href = "/change/{{user.id}}">ИЗМЕНИТЬ</a> </td>
+					<th> ID </th>
+					<th> ИМЯ </th>
+					<th> ЛОГИН </th>
+					<th> ПРАВА </th>
+					<th> АКТИВНОСТЬ </th>
+					<th> ДЕЙСТВИЯ </th>
 				</tr>
-				{% endfor %}
-		</tbody>
-	{% endif %}
+			</thead>
+			<tbody>
+			{%for user in users_values%}
+					<tr>
+						<td> {{user.id}} </td>
+						<td> {{user.name}} </td>
+						<td> {{user.email}} </td>
+						<td> {{user.privileges}} </td>
+						<td>
+						{% if user.isblocked == False %}
+							активен
+						{% else %}
+							заблокирован
+						{% endif %}
+						</td>
+						<td> <a href = "/change/{{user.id}}">ИЗМЕНИТЬ</a> </td>
+					</tr>
+					{% endfor %}
+			</tbody>
+		</table>
+		
+		<h3 style="text-align: center;">
+			<a href = "/admin/{{page_num-1}}" style="text-decoration: none;"> &lt;&lt;&lt; </a>
+			{{page_num}}
+			<a href = "/admin/{{page_num+1}}" style="text-decoration: none;"> &gt;&gt;&gt; </a>
+		</h3>
 	</div>
-	<br>
-	<a href = "/register/"> ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ </a>
-	<br>
-	<br>
-	СТРАНИЦА: {{page_num}}
-	<br>
-	<a href = "/admin/{{page_num+1}}">вперёд</a>
-	<br>
-	<a href = "/admin/{{page_num-1}}">назад</a>
+
+	{% endif %}
+	
 </body>

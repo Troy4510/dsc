@@ -148,7 +148,7 @@ def adm_page(page):
     '''
     
     if current_user.privileges == 'admin':
-        msg = f'ROOT_NAME: {current_user.name}, STATUS: {current_user.privileges}'
+        msg = f'ROOT_NAME: {current_user.name}, <br> STATUS: {current_user.privileges}'
         ava = '/static/avatars/' + current_user.ava_link
         listX = Users.query.order_by(Users.id).offset(start_reading).limit(10).all()
         #print(len(listX))

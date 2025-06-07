@@ -1,0 +1,41 @@
+body{
+    background-color:gray; 
+}
+
+.header{
+    width:auto;
+    height:auto;
+    margin-left:20px;
+    background-color:darkkhaki;
+    border-radius:10px 10px 10px 10px;
+}
+
+.avatar{
+    /*background-color:DarkCyan;*/
+    /*float:left;*/
+    display:flex;
+    width:auto;
+    height:auto;
+    margin-left:20px;
+    border-radius:10px 10px 10px 10px;
+}
+
+.message{
+    width:auto;
+    height:50%;
+    margin-left:20px;
+    background-color:darkkhaki;
+    border-radius:10px 10px 10px 10px;
+}
+
+.works_table{
+    margin-left:20px;
+    background-color:darkkhaki;
+    width:auto;
+    border-radius:10px 10px 10px 10px;
+}
+
+table{
+    width:100%;
+    font-weight: bold
+}
