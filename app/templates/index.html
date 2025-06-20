@@ -4,22 +4,30 @@
 
 <head>
 	<meta charset="UTF-8">
+  <link rel="stylesheet" href="/static/style.css">
 	<title>DSC</title>
 </head>
 
 
 <body>
-<h1> ГЛАВНАЯ СТРАНИЦА DSChat <h1>
+  <div class="header">
+  <h1> ГЛАВНАЯ СТРАНИЦА DSChat <h1>
+  </div>
+
 
 {% if data %}
-  <!--  <p>Ваш IP: {{ data[0] }}</p> -->
+  <div class="header">
+    <!--  <p>Ваш IP: {{ data[0] }}</p> -->
     <p>Ваш клиент:{{  data[1] }}</p>
+  </div>
 {% endif %}
 
+<div class="header">
+  Ссылки:
+  <br>
+  <a href = "/login/" /a> ВОЙТИ В СИСТЕМУ
+  <br>
+  <a href = "/regnew/" /a> ЗАРЕГИСТРИРОВАТЬСЯ
+  </div>
 
-Ссылки:
-<br>
-<a href = "/login/" /a> ВОЙТИ В СИСТЕМУ
-<br>
-<a href = "/regnew/" /a> ЗАРЕГИСТРИРОВАТЬСЯ
 </body>

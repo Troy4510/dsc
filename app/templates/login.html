@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 	<!-- <meta http-equiv="refresh" content="1"> -->
+	<link rel="stylesheet" href="/static/style.css">
     <title>Login</title>
 </head>
+
 <body>
 
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
+	<div class="login">
+
+    	{% if message %}
+        	<h2>{{ message }}</h2>
+    	{% endif %}
     
     <form action="" method="post">
         <p>
@@ -25,6 +30,6 @@
 	</p>
 
     </form>
-
+</div>
 </body>
 </html>

@@ -4,17 +4,19 @@
 
 <head>
 	<meta charset="UTF-8">
+  <link rel="stylesheet" href="/static/style.css">
 	<title>DSC</title>
 </head>
 
 
 <body>
     <h1> ИЗМЕНЕНИЕ ЗАПИСИ: <h1>
-
+      <div class="header">
+        <img src={{url_for('static', filename='avatars/' + avatar)}} style="width: 10%; height: auto;">
         {% if message %}
         <p>{{ message }}</p>
         {% endif %}
-        <img src={{url_for('static', filename='avatars/' + avatar)}} style="width: 10%; height: auto;">
+      </div>
         <form action="#" method="post">
             <p>
             <label for="id">запись</label>

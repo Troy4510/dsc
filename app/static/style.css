@@ -35,6 +35,14 @@ body{
     border-radius:10px 10px 10px 10px;
 }
 
+.login{
+    width:50%;
+    height:auto;
+    margin-left:20px;
+    background-color:darkkhaki;
+    border-radius:10px 10px 10px 10px;
+}
+
 table{
     width:100%;
     font-weight: bold
