@@ -34,10 +34,19 @@
 		</h3>
 
 		<h3 style="text-align: center;">
-			<a href = "/admin/{{page_num-1}}" style="text-decoration: none;"> &lt;&lt;&lt; </a>
+			{% if page_num <= 1 %}	
+				<a href = "/admin/{{page_num-1}}" class="disabled" style="text-decoration: none;"> &lt;&lt;&lt; </a>
+			{% else %}
+				<a href = "/admin/{{page_num-1}}" style="text-decoration: none;"> &lt;&lt;&lt; </a>
+			{% endif %}
 			{{page_num}}
-			<a href = "/admin/{{page_num+1}}" style="text-decoration: none;"> &gt;&gt;&gt; </a>
+			{% if page_num >= max_page %}
+				<a href = "/admin/{{page_num+1}}" class="disabled" style="text-decoration: none;"> &gt;&gt;&gt; </a>
+			{% else %}
+				<a href = "/admin/{{page_num+1}}" style="text-decoration: none;"> &gt;&gt;&gt; </a>
+			{% endif %}
 		</h3>
+
 		<table border=1>
 			<thead>
 				<tr>
@@ -70,10 +79,19 @@
 		</table>
 		
 		<h3 style="text-align: center;">
-			<a href = "/admin/{{page_num-1}}" style="text-decoration: none;"> &lt;&lt;&lt; </a>
+			{% if page_num <= 1 %}	
+				<a href = "/admin/{{page_num-1}}" class="disabled" style="text-decoration: none;"> &lt;&lt;&lt; </a>
+			{% else %}
+				<a href = "/admin/{{page_num-1}}" style="text-decoration: none;"> &lt;&lt;&lt; </a>
+			{% endif %}
 			{{page_num}}
-			<a href = "/admin/{{page_num+1}}" style="text-decoration: none;"> &gt;&gt;&gt; </a>
+			{% if page_num >= max_page %}
+				<a href = "/admin/{{page_num+1}}" class="disabled" style="text-decoration: none;"> &gt;&gt;&gt; </a>
+			{% else %}
+				<a href = "/admin/{{page_num+1}}" style="text-decoration: none;"> &gt;&gt;&gt; </a>
+			{% endif %}
 		</h3>
+
 		<br>
 	</div>
 

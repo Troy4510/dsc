@@ -5,10 +5,11 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import random
 import datetime
+import config
 
 app = Flask(__name__, template_folder = 'app/templates', static_folder = 'app/static')
-app.config['SECRET_KEY'] = '48_obezyan_v_jopu_sunuli_banan'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://dsc_user:484827548@localhost/dsc_base'
+app.config['SECRET_KEY'] = config.app_key
+app.config['SQLALCHEMY_DATABASE_URI'] = config.database_uri
 upload_folder = './main/app/static/avatars'
 
 if not os.path.exists(upload_folder):
@@ -62,8 +63,8 @@ def createdb():
      
 @login_manager.user_loader
 def loading_user(user_id):
-    #return Users.query.get(int(user_id))
-    return db.session.get(Users, int(user_id))
+    x = db.session.get(Users, int(user_id))
+    return x
 
 @app.route('/')
 @app.route('/index.html')
@@ -156,8 +157,8 @@ def adm_page(page):
         for userX in listX:
             users_values.append(userX)
         #print(users_values[0].name)
-        return render_template('admin.html', message = msg,
-                               avatar = ava, users_values = users_values, page_num = current_page)
+        return render_template('admin.html', message = msg, avatar = ava, users_values = users_values,
+                               max_page = pages_count, page_num = current_page)
     else: return 'НЕТ ДОСТУПА'
 
 @app.route('/change/<user_id>', methods=['post',  'get'])

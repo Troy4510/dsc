@@ -47,3 +47,8 @@ table{
     width:100%;
     font-weight: bold
 }
+
+.disabled{
+    pointer-events: none;
+    color:gray;
+}
