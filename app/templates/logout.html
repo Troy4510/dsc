@@ -5,32 +5,10 @@
     <meta charset="UTF-8">
 	<!-- <meta http-equiv="refresh" content="1"> -->
 	<link rel="stylesheet" href="/static/style.css">
-    <title>Login</title>
+    <title>logout</title>
 </head>
 
 <body>
-
-	<div class="login">
-
-    	{% if message %}
-        	<h2>{{ message }}</h2>
-    	{% endif %}
-    
-    <form action="" method="post">
-        <p>
-	    <label for="username">E-MAIL</label>
-	    <input type="text" name="username">
-	</p>
-	<p>
-	    <label for="password">ПАРОЛЬ</label>
-	    <input type="password" name="password">
-	</p>
-	<p>
-	    <input type="submit" value="ОТПРАВИТЬ">
-	</p>
-
-    </form>
-</div>
 
 {% if ok_message %}
 <div class="ok_message">
@@ -50,5 +28,9 @@
 </div>
 {% endif %}
 
+<br>
+<div class="header">
+    <a href = "/login/" /a> ВОЙТИ СНОВА
+    </div>
 </body>
 </html>

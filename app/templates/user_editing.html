@@ -18,7 +18,7 @@
         <img src={{url_for('static', filename='avatars/' + avatar)}} style="width: 10%; height: auto;">
         </div>
     {% endif %}
-
+    <br>
     <form method="POST" enctype="multipart/form-data" action="/upload">
         <input type="file" name="file">
         <input type="submit" value="загрузить">

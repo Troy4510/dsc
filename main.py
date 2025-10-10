@@ -10,6 +10,8 @@ import config
 app = Flask(__name__, template_folder = 'app/templates', static_folder = 'app/static')
 app.config['SECRET_KEY'] = config.app_key
 app.config['SQLALCHEMY_DATABASE_URI'] = config.database_uri
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(hours=1)
+#app.config['PERMANENT'] = False #при закрыти браузера
 upload_folder = './main/app/static/avatars'
 
 if not os.path.exists(upload_folder):
@@ -98,7 +100,7 @@ def register_user():
             return redirect('/admin/1')    
         
         
-    return render_template('login.html', message = 'ВХОД:')
+    return render_template('login.html', message = 'ВХОД:', mod_message = "Введите данные для аутентификации")
 
 
 @app.route('/user/')
@@ -365,14 +367,15 @@ def upload_file():
     else:
         return f'расширение {ext1[1]} не разрешено'
 
-'''
+@app.route("/chat/")
+def chatting():
+    return render_template('chat.html')
+
 @app.route("/logout/")
 @login_required
 def logout():
     logout_user()
-    return "Вы успешно вышли из системы!"
-эта хуита не работает (ошибки flask utils)
-'''
+    return render_template('logout.html', ok_message = "Вы успешно вышли из системы")
 
 
 if __name__ == "__main__":

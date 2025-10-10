@@ -13,20 +13,43 @@
     <div class="header">
         <h1> USER PAGE <h1>
     </div>
+<!--
+    <div class="popup">
+   123
+   <button onclick="closePopup()">Закрыть</button>
+    </div>
+-->
 
     <div class="avatar">
     {%if avatar %}
     <img src={{url_for('static', filename='avatars/' + avatar)}} style="width: 10%; height: auto;" alt="default">
     {% endif %}
     <br>
-    
     <div class="message">
     {% if message %}
         <p> {{message}}</p>
     {% endif %}
     </div>
     </div>
+    <br>
+    <div class="header">
+    <a href = "/chat/" /a> НАЧАТЬ/ПРОДОЛЖИТЬ ОБЩЕНИЕ С DEEPSEEK
+    </div>
+    <br>
     <div class="header">
     <a href = "/user_editing/" /a> ИЗМЕНИТЬ ПАРОЛЬ ИЛИ АВАТАР
     </div>
+    <br>
+    <div class="header">
+    <a href = "/logout/" /a> ВЫЙТИ ИЗ СИСТЕМЫ
+    </div>
+
+<!--
+    <script>
+        function closePopup() {
+        var popup = document.querySelector('.popup');
+        popup.style.display = 'none';
+        }
+    </script>
+-->
 </body>
