@@ -6,6 +6,8 @@ import os
 import random
 import datetime
 import config
+import alch_api as messages
+import dsc_api as dsc
 
 app = Flask(__name__, template_folder = 'app/templates', static_folder = 'app/static')
 app.config['SECRET_KEY'] = config.app_key
@@ -57,6 +59,8 @@ class Users(db.Model): #класс для алхимика и flask-login
     
     def get_id(self):
         return str(self.id)
+
+
 '''
 def createdb():
     db.create_all()
@@ -155,6 +159,7 @@ def adm_page(page):
         ava = '/static/avatars/' + current_user.ava_link
         listX = Users.query.order_by(Users.id).offset(start_reading).limit(10).all()
         #print(len(listX))
+        #print(listX)
         users_values = []
         for userX in listX:
             users_values.append(userX)
@@ -367,9 +372,20 @@ def upload_file():
     else:
         return f'расширение {ext1[1]} не разрешено'
 
-@app.route("/chat/")
-def chatting():
-    return render_template('chat.html')
+@app.route("/chat/", methods=['post',  'get'])
+@login_required
+def chat():
+    history = messages.read_history(current_user.id,1)
+    if request.method == 'POST':
+        user_question = request.form.get('user_question')
+        result = dsc.ask(user_question)
+        result[0] = current_user.id
+        result[1] = 1
+        messages.write_record(result)
+        history = messages.read_history(current_user.id,1)
+        return redirect(url_for('chat', history=history))
+    
+    return render_template('chat.html', history=history)
 
 @app.route("/logout/")
 @login_required
