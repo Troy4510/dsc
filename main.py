@@ -2,6 +2,7 @@ from flask import  Flask, request, session, render_template, flash, redirect, ur
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, emit
 import os
 import random
 import datetime
@@ -94,18 +95,24 @@ def register_user():
         #print(user.privileges)
         if not user or not user.check_password(password):
             flash('неверные данные аутентификации')
-            return render_template('login.html', message = 'ОШИБКА АУТЕНТИФИКАЦИИ')
+            return render_template('login.html', 
+                                   message = 'ВХОД:', 
+                                   err_message = "Данные не верны, попробуйте снова")
         
-        login_user(user)
+        else:
+            login_user(user)
+            return redirect('/chat/')
         
-        if user.privileges == 'user':
-            return redirect('/user/')
-        elif user.privileges == 'admin':
-            return redirect('/admin/1')    
-        
-        
-    return render_template('login.html', message = 'ВХОД:', mod_message = "Введите данные для аутентификации")
+    return render_template('login.html', message = 'ВХОД:', 
+                           mod_message = "Введите данные для аутентификации")
 
+@app.route('/profile_selector/')
+@login_required
+def profile_selector():
+    if current_user.privileges == 'user':
+        return redirect('/user/')
+    elif current_user.privileges == 'admin':
+        return redirect('/admin/1')   
 
 @app.route('/user/')
 @login_required
@@ -383,7 +390,7 @@ def chat():
         result[1] = 1
         messages.write_record(result)
         history = messages.read_history(current_user.id,1)
-        return redirect(url_for('chat', history=history))
+        return redirect(url_for('chat'))
     
     return render_template('chat.html', history=history)
 

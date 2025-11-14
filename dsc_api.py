@@ -10,7 +10,8 @@ def ask(question):
     if api_ready['is_available']:
         answer = client.chat.completions.create(
             model = "deepseek-chat",
-            messages = [{"role": "user", "content": question}])
+            messages = [{"role": "user", "content": question}], 
+            stream = False)
     
         output = [0,1]
         output.append(answer.id)

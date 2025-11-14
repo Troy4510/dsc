@@ -98,6 +98,13 @@ table{
     height:auto;
 }
 
+.top_menu{
+    display: flex;
+    background-color: black;
+    top:0;
+    right: 0;
+    position:fixed;
+}
 .chat_question {
     text-align: left;
     margin-left: 10%;
@@ -118,8 +125,17 @@ table{
 
 .chat_center {
     background-color: white;
-    margin-top: 0%;
-    margin-bottom: 20%;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.blink_text{
+    animation: blink 1s linear infinite;
+    
 }
 
 .chat_form {
