@@ -58,13 +58,23 @@ def read_history(user_id,chat_id):
     return last_records
     
     
-    
+def read_last_record(user_id, chat_id):
+     with Session(autoflush=False, bind = alchemy_engine) as db:
+        last_record = db.query(Messages).\
+                        filter(Messages.user_id==user_id, Messages.chat_id==chat_id).\
+                        order_by(Messages.time_mark.desc()).\
+                        first()
+        return last_record
     
     
 if __name__ == '__main__':
     #write_record(1,1,'test_message_id','test_ask','test_answer','ok', 15)
-    records = read_history(2,1)
-    print(f'found {len(records)} records:')
-    for record in records:
-        print(f'id:{record.id} , at {record.time_mark}')
-    pass
+    #records = read_history(2,1)
+    #print(f'found {len(records)} records:')
+    #for record in records:
+    #    print(f'id:{record.id} , at {record.time_mark}')
+    #pass
+
+    one_record = read_last_record(5,1)
+    print(f'ask: {one_record.ask}')
+    print(f'answer: {one_record.answer}')

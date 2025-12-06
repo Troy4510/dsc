@@ -28,8 +28,12 @@
 	<p>
 	    <input type="submit" value="ОТПРАВИТЬ">
 	</p>
-
+		<input type="hidden" name="window_width" id="window_width_data">
+  		<input type="hidden" name="window_height" id="window_height_data">
+		<input type="hidden" name="screen_width" id="screen_width_data">
+  		<input type="hidden" name="screen_height" id="screen_height_data">
     </form>
+
 </div>
 
 {% if ok_message %}
@@ -49,6 +53,13 @@
 	{{mod_message}}
 </div>
 {% endif %}
+
+<script>
+  document.getElementById('window_width_data').value = window.innerWidth;
+  document.getElementById('window_height_data').value = window.innerHeight;
+  document.getElementById('screen_width_data').value = window.screen.width;
+  document.getElementById('screen_height_data').value = window.screen.height;
+</script>
 
 </body>
 </html>

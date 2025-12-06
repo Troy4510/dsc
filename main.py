@@ -1,4 +1,4 @@
-from flask import  Flask, request, session, render_template, flash, redirect, url_for
+from flask import  Flask, request, session, render_template, flash, redirect, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
@@ -89,10 +89,8 @@ def register_user():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        
         user = Users.query.filter_by(email=username).first()
         #user = db.session.get(Users).filter_by(email=username).first()
-        #print(user.privileges)
         if not user or not user.check_password(password):
             flash('неверные данные аутентификации')
             return render_template('login.html', 
@@ -100,8 +98,14 @@ def register_user():
                                    err_message = "Данные не верны, попробуйте снова")
         
         else:
+            width_1 = request.form.get('window_width')
+            height_1 = request.form.get('window_height')
+            width_2 = request.form.get('screen_width')
+            height_2 = request.form.get('screen_height')
+            print(f'window_width: {width_1}, window_height: {height_1}')
+            print(f'screen_width: {width_2}, screen_height: {height_2}')
             login_user(user)
-            return redirect('/chat/')
+            return redirect('/chat_v2/')
         
     return render_template('login.html', message = 'ВХОД:', 
                            mod_message = "Введите данные для аутентификации")
@@ -162,7 +166,9 @@ def adm_page(page):
     '''
     
     if current_user.privileges == 'admin':
-        msg = f'ROOT_NAME: {current_user.name}, <br> STATUS: {current_user.privileges}'
+        balance = dsc.api_status()
+        msg = f'ROOT_NAME: {current_user.name}, <br> STATUS: {current_user.privileges},\
+            <br> <br> API_BALANCE: {balance} USD'
         ava = '/static/avatars/' + current_user.ava_link
         listX = Users.query.order_by(Users.id).offset(start_reading).limit(10).all()
         #print(len(listX))
@@ -390,9 +396,42 @@ def chat():
         result[1] = 1
         messages.write_record(result)
         history = messages.read_history(current_user.id,1)
+        print(history)
         return redirect(url_for('chat'))
-    
+    #print(history)
+    #print(dir(history[0]))
+    #print(history[0].ask)
     return render_template('chat.html', history=history)
+
+@app.route("/chat_v2/", methods=['post',  'get'])
+@login_required
+def chat_v2():
+    return render_template('chat_v2.html')
+
+@app.route("/history_fetch/", methods=['get'])
+@login_required
+def history_fetch():
+    answer_js = []
+    history = messages.read_history(current_user.id,1)
+    for x in history:
+        obj = {'message_id' : x.message_id, 'time_mark': x.time_mark, 'ask' : x.ask,
+               'answer' : x.answer, 'tokens_counter': x.tokens_counter}
+        answer_js.append(obj)
+    return jsonify(answer_js)
+
+@app.route("/ask_fetch/", methods = ['POST'])
+@login_required
+def ask_fetch():
+    data = request.get_json()
+    question = data.get('user_question')
+    result = dsc.ask(question)
+    result[0] = current_user.id
+    result[1] = 1
+    messages.write_record(result)
+    
+    print(f'ask from {current_user.id}: {question}')
+    x = {'answe_recieved' : 'ok'}
+    return jsonify(x)
 
 @app.route("/logout/")
 @login_required
@@ -402,4 +441,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=5050, debug=True)
+    app.run(host='192.168.0.10', port=5050, debug=True)

@@ -7,7 +7,7 @@ client = OpenAI(api_key = config.dsc_key, base_url = "https://api.deepseek.com/v
 def ask(question):
     #здесь позже будет процедура проверки на запрещенные слова
     api_ready = api_status()
-    if api_ready['is_available']:
+    if api_status() != None:
         answer = client.chat.completions.create(
             model = "deepseek-chat",
             messages = [{"role": "user", "content": question}], 
@@ -40,7 +40,7 @@ def api_status():
     #print(f'баланс = {money} USD')
     #print(f'доступность: {available}')
     
-    return balance
+    return money
 
 if __name__ == '__main__':
     x = ask('сколько будет 2+2')

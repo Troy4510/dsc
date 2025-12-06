@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+	<meta charset="UTF-8">
+    <!-- <meta http-equiv="refresh" content="0">! -->
+	<link rel="stylesheet" href="/static/style.css">
+	<title>DSC_chat</title>
+</head>
+
+
+<body style="background-color: white;">
+
+    <div class = "top_menu_js">
+        <div id = "enter_menu", style = 'color: white; margin = 10,10,10,10;'>
+            MENU
+        </div>
+        <div id = "menu_list">
+            <ul>
+                <h1>
+                <a href="/profile_selector/", style = 'color: white;'>Профиль</a> &emsp;
+                <a href="/chat/", style = 'color: white;'>HTML_version</a> &emsp; 
+                <a href="/logout/", style = 'color: white;'>Выход</a> &emsp; 
+                </h1>
+            </ul>
+        </div>
+    </div>
+
+
+    <div id = "chat_center", class = "chat_center"></div>
+
+    <div id = "end_page_marker"></div>
+
+    <div class = "chat_form">
+    <form action="" method="post" onsubmit="submit_pushed()">
+            <ul>
+	        <input  id="ask_field"
+                    type="text" 
+                    name="user_question" 
+                    style="margin-left:5%; margin-right:5%; width:70%; height: 30px;">
+            
+	        <input  id="submit_button"
+                    onclick = "send_ask()"
+                    type="submit" 
+                    value="ОТПРАВИТЬ" 
+                    style="background: rgb(58, 146, 175); height: 30px;">
+            </ul>
+    </form>
+    </div>
+
+
+
+    <script>
+        
+        function func_1(){
+            let adder = '#<br>';
+            let element = document.getElementById('chat_center');
+            let x_txt = element.innerHTML
+            element.innerHTML = x_txt + adder;
+            setTimeout(func_1, 1000);
+        }
+        
+        function add_history(){
+            fetch('/history_fetch/')
+                .then(response => response.json())
+                .then(data => {
+                    let chat_element = document.getElementById('chat_center');
+                    
+                    for (const record of data){
+                        let ask_field = document.createElement("div");
+                        ask_field.classList.add('chat_question');
+                        ask_field.innerHTML = record.time_mark + '<br>' + record.ask + '<br>';
+                        chat_element.append(ask_field);
+
+                        let answer_field = document.createElement("div");
+                        answer_field.classList.add('chat_answer');
+                        answer_field.innerHTML = record.answer + '<br>';
+                        chat_element.append(answer_field);
+                        chat_element.scrollIntoView({behavior:'smooth', block: 'end'})
+                        }
+                    const end_page = document.getElementById('end_page_marker');
+                    end_page.scrollIntoView({behavior:'smooth'});
+                });
+        }
+
+        function format_answer(answer){
+            pass    
+        }
+
+        const enter_menu = document.getElementById('enter_menu');
+        const menu_list = document.getElementById('menu_list');
+        menu_list.style.display = 'none';
+
+        enter_menu.addEventListener('mouseover', function(){
+            menu_list.style.display = 'block';
+        });
+
+        menu_list.addEventListener('mouseover', function(){
+            menu_list.style.display = 'block';
+        });
+        
+        menu_list.addEventListener('mouseout', function(){
+            menu_list.style.display = 'none';
+        });
+        
+
+        function send_ask(){
+            event.preventDefault();
+            let chat_element = document.getElementById('chat_center');
+            let question = document.getElementById('ask_field')
+            let data = {user_question : ''};
+            data['user_question'] = question.value;
+
+            let ask_field = document.createElement("div");
+            ask_field.classList.add('chat_question');
+            ask_field.innerHTML = 'Отправка запроса в API:' + '<br>' + question.value + '<br>';
+            chat_element.append(ask_field);
+
+            let answer_field = document.createElement("div");
+            answer_field.classList.add('chat_answer');
+            answer_field.classList.add('blink_text');
+            answer_field.innerHTML = 'ожидайте ответа';
+            chat_element.append(answer_field);
+            chat_element.scrollIntoView({behavior:'smooth', block: 'end'});
+
+            const end_page = document.getElementById('end_page_marker');
+            end_page.scrollIntoView({behavior:'smooth'});
+
+            let send_btn = document.getElementById('submit_button');
+            send_btn.disabled = true;
+
+            fetch('/ask_fetch/', {method: 'POST',
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    add_history();
+                    send_btn.disabled = false;
+                    question.value = '';
+                })
+        }
+
+
+        window.onload = add_history;
+
+
+    </script>
+
+
+
+</body>
