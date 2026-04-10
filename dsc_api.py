@@ -1,12 +1,12 @@
 from deepseek import DeepSeekAPI
 from openai import OpenAI
+import asyncio
 import config
 
 client = OpenAI(api_key = config.dsc_key, base_url = "https://api.deepseek.com/v1")
 
 def ask(question):
     #здесь позже будет процедура проверки на запрещенные слова
-    api_ready = api_status()
     if api_status() != None:
         answer = client.chat.completions.create(
             model = "deepseek-chat",
@@ -17,7 +17,7 @@ def ask(question):
         output.append(answer.id)
         output.append(question)
         output.append(answer.choices[0].message.content)
-        output.append('status_ok')
+        output.append(2)#status ok
         output.append(answer.usage.completion_tokens)
         return output
     else: 
@@ -31,6 +31,8 @@ def ask(question):
     #print(f'затрачено токенов: {answer.usage.total_tokens} из них:')
     #print(f'на вопрос (промт): {answer.usage.prompt_tokens}')
     #print(f'на ответ (комплит): {answer.usage.completion_tokens}')
+
+
 
 def api_status():
     api_client = DeepSeekAPI(api_key=config.dsc_key)

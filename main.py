@@ -105,7 +105,7 @@ def register_user():
             print(f'window_width: {width_1}, window_height: {height_1}')
             print(f'screen_width: {width_2}, screen_height: {height_2}')
             login_user(user)
-            return redirect('/chat_v2/')
+            return redirect('/chat/')
         
     return render_template('login.html', message = 'ВХОД:', 
                            mod_message = "Введите данные для аутентификации")
@@ -391,16 +391,13 @@ def chat():
     history = messages.read_history(current_user.id,1)
     if request.method == 'POST':
         user_question = request.form.get('user_question')
-        result = dsc.ask(user_question)
-        result[0] = current_user.id
-        result[1] = 1
-        messages.write_record(result)
+        #вопрос из формы получен, записываем в базу вопрос со статусом "wait"
+        tmp_ask_record = [current_user.id, 1, user_question]
+        messages.write_wait_record(tmp_ask_record)
+        
         history = messages.read_history(current_user.id,1)
-        print(history)
         return redirect(url_for('chat'))
-    #print(history)
-    #print(dir(history[0]))
-    #print(history[0].ask)
+    
     return render_template('chat.html', history=history)
 
 @app.route("/chat_v2/", methods=['post',  'get'])
@@ -424,13 +421,13 @@ def history_fetch():
 def ask_fetch():
     data = request.get_json()
     question = data.get('user_question')
-    result = dsc.ask(question)
-    result[0] = current_user.id
-    result[1] = 1
-    messages.write_record(result)
+    #result = dsc.ask(question)
+    #result[0] = current_user.id
+    #result[1] = 1
+    #messages.write_record(result)
     
     print(f'ask from {current_user.id}: {question}')
-    x = {'answe_recieved' : 'ok'}
+    x = {'answer_recieved' : 'ok'}
     return jsonify(x)
 
 @app.route("/logout/")
